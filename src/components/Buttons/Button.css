@@ -1,0 +1,18 @@
+.custom-button {
+  background-color: #086632;
+  border-color: #086632;
+  color: white;
+  font-weight: 500;
+}
+
+.custom-button:hover {
+
+  border-color: #065426 !important;
+  color: #065426 !important;
+  font-weight: 500;
+}
+
+.custom-button:focus {
+  background-color: #065426;
+  border-color: #065426;
+}

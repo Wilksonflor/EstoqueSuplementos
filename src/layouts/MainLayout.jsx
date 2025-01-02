@@ -55,15 +55,15 @@ export const MainLayout = () => {
               icon: <UserOutlined />,
               label: <Link to="/usuarios">Usuários</Link>,
             },
-            // {
-            //   key: "5",
-            //   icon: <LogoutOutlined />,
-            //   label: <Link to="/usuarios">Sair</Link>,
-            // },
           ]}
         />
+        <Menu.Item key="5" icon={<LogoutOutlined />}>
+          <Button type="text" onClick={logout}>
+            Sair
+          </Button>
+        </Menu.Item>
 
-     {/* Button de sair */}
+        {/* Button de sair */}
       </Sider>
 
       {/* Main Layout */}
