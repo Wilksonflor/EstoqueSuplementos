@@ -7,7 +7,6 @@ import Produtos from "../pages/Produtos/Produtos";
 import Categorias from "../pages/Categorias/Categorias";
 import Login from "../pages/Login/Login";
 import ProtectedRoute from "./ProtectedRoute";
-// import Usuarios from "../pages/Usuarios/Usuarios";
 const AppRoutes = () => {
   return (
     <AuthProvider>
