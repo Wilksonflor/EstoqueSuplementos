@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button } from "antd";
-import produtoService from "../../services/produtoService";
+import produtoService from '../../services/ProdutoService';
 
 const Produtos = () => {
   const [produtos, setProdutos] = useState([]);
