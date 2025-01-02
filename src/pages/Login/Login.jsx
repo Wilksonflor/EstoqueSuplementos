@@ -2,31 +2,43 @@ import React from "react";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { Form, Input, Button, Alert, Card, Spin, Divider } from "antd";
-import { useNavigate } from "react-router-dom";
-import "./Login.css";
+import { useNavigate, useLocation } from "react-router-dom";
 import CustomButton from "../../components/Buttons/CustomButton";
+import "./Login.css";
+
 const Login = () => {
   const { login, user, loading } = useContext(AuthContext);
   const [loadingForm, setLoadingForm] = useState(false);
+  const [hasRedirected, setHasRedirected] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const onFinish = async (values) => {
     setLoadingForm(true);
     try {
-      await login(values.email, values.password);
+      await login({
+        email: values.email,
+        senha: values.password,
+      });
     } catch (error) {
-      setError(error.message);
+      setError(
+        error.response?.data?.error || "Erro ao fazer login. Tente novamente."
+      );
     } finally {
       setLoadingForm(false);
     }
   };
 
   useEffect(() => {
-    if (user && !loading) {
-      navigate("/");
+    console.log("Estado do usuário:", user);
+    console.log("Estado de carregamento:", loading);
+
+    if (user && !loading && !hasRedirected && location.pathname === "/login") {
+      setHasRedirected(true); // Marca como redirecionado antes de navegar
+      navigate("/"); // Redireciona para a rota protegida
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, hasRedirected, location.pathname]);
 
   if (loading) {
     return <div className="loading-container">{<Spin size="large" />}</div>;
@@ -63,13 +75,8 @@ const Login = () => {
             <Input.Password placeholder="Digite sua senha" className="input" />
           </Form.Item>
           <Form.Item>
-            <CustomButton
-              // type="primary"
-              htmlType="submit"
-              block
-              loading={loadingForm}
-            >
-              {loadingForm ? "Carregando...." : "Entrar"}
+            <CustomButton htmlType="submit" block loading={loadingForm}>
+              {loadingForm ? "Entrando" : "Entrar"}
             </CustomButton>
           </Form.Item>
         </Form>
