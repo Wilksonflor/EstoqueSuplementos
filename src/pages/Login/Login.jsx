@@ -1,7 +1,7 @@
 import React from "react";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { Form, Input, Button, Alert, Card, Spin, Divider } from "antd";
+import { Form, Input, Button, Alert, Card, Spin, Divider, Space } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import CustomButton from "../../components/Buttons/CustomButton";
 import "./Login.css";
@@ -9,7 +9,7 @@ import "./Login.css";
 const Login = () => {
   const { login, user, loading } = useContext(AuthContext);
   const [loadingForm, setLoadingForm] = useState(false);
-  const [hasRedirected, setHasRedirected] = useState(false);
+  // const [hasRedirected, setHasRedirected] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,10 +17,13 @@ const Login = () => {
   const onFinish = async (values) => {
     setLoadingForm(true);
     try {
-      await login({
+      const loggedInUser = await login({
         email: values.email,
         senha: values.password,
       });
+      if (loggedInUser) {
+        navigate("/"); // Redirecione após o login bem-sucedido
+      }
     } catch (error) {
       setError(
         error.response?.data?.error || "Erro ao fazer login. Tente novamente."
@@ -31,14 +34,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    console.log("Estado do usuário:", user);
-    console.log("Estado de carregamento:", loading);
-
-    if (user && !loading && !hasRedirected && location.pathname === "/login") {
-      setHasRedirected(true); // Marca como redirecionado antes de navegar
-      navigate("/"); // Redireciona para a rota protegida
+    if (user && location.pathname === "/login") {
+      navigate("/");
     }
-  }, [user, loading, navigate, hasRedirected, location.pathname]);
+  }, [user, location.pathname, navigate]);
 
   if (loading) {
     return <div className="loading-container">{<Spin size="large" />}</div>;
@@ -82,10 +81,10 @@ const Login = () => {
         </Form>
         <Divider></Divider>
 
-        <div>
-          <a>Esqueceu a senha?</a>
-          <a>Cadastre-se</a>
-        </div>
+        <Space className="footerLogin">
+          <a className="forgetPass">Esqueceu a senha?</a>
+          <a className="register">Cadastre-se</a>
+        </Space>
       </Card>
     </div>
   );

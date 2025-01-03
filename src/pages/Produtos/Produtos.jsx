@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button } from "antd";
-import produtoService from '../../services/ProdutoService';
-
+import produtoService from "../../services/ProdutoService";
+import CustomButton from "../../components/Buttons/CustomButton";
 const Produtos = () => {
   const [produtos, setProdutos] = useState([]);
 
@@ -12,7 +12,7 @@ const Produtos = () => {
   return (
     <div className="produtos">
       <h1>Gerenciamento de Produtos</h1>
-      <Button type="primary">Adicionar Produto</Button>
+      <CustomButton >Adicionar Produto</CustomButton>
       <Table
         dataSource={produtos}
         columns={[

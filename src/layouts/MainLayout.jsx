@@ -8,20 +8,28 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme } from "antd";
+import { Avatar, Button, Layout, Menu, Space, theme } from "antd";
 import { Outlet, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import "./MainLayout.css";
+
 const { Header, Sider, Content } = Layout;
 
 export const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const { logout, user } = useAuth();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* Sidebar */}
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Sider
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        style={{ backgroundColor: "#085924" }}
+      >
         <div
           className="demo-logo-vertical"
           style={{
@@ -31,51 +39,57 @@ export const MainLayout = () => {
           }}
         />
         <Menu
-          theme="dark"
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          theme="dark" /* Torna o menu com fundo escuro e itens brancos */
+          className="menu"
           items={[
             {
-              key: "1",
-              icon: <DashboardOutlined />,
-              label: <Link to="/">Dashboard</Link>,
-            },
-            {
               key: "2",
-              icon: <ShoppingCartOutlined />,
-              label: <Link to="/produtos">Produtos</Link>,
+              icon: <ShoppingCartOutlined className="menu-icon" />,
+              label: (
+                <Link to="/produtos" className="menu-link">
+                  Produtos
+                </Link>
+              ),
             },
             {
               key: "3",
-              icon: <TagsOutlined />,
-              label: <Link to="/categorias">Categorias</Link>,
+              icon: <TagsOutlined className="menu-icon" />,
+              label: (
+                <Link to="/categorias" className="menu-link">
+                  Categorias
+                </Link>
+              ),
             },
             {
               key: "4",
-              icon: <UserOutlined />,
-              label: <Link to="/usuarios">Usuários</Link>,
+              icon: <UserOutlined className="menu-icon" />,
+              label: (
+                <Link to="/usuarios" className="menu-link">
+                  Usuários
+                </Link>
+              ),
+            },
+            {
+              key: "5",
+              icon: <LogoutOutlined className="logout-icon" />,
+              label: (
+                <Link to="/login" onClick={logout} className="logout-link">
+                  Sair
+                </Link>
+              ),
             },
           ]}
         />
-        <Menu.Item key="5" icon={<LogoutOutlined />}>
-          <Button type="text" onClick={logout}>
-            Sair
-          </Button>
-        </Menu.Item>
-
-        {/* Button de sair */}
       </Sider>
-
-      {/* Main Layout */}
       <Layout>
         <Header
           style={{
             padding: 0,
             background: colorBgContainer,
-            display: "flex",
-            alignItems: "center",
             paddingLeft: "16px",
           }}
+          className="headerContainer"
         >
           <Button
             type="text"
@@ -88,8 +102,14 @@ export const MainLayout = () => {
             }}
           />
           <h2 style={{ marginLeft: "16px" }}>Sistema de Estoque</h2>
+          <div className="avatar">
+            <Space className="avatar-space">
+              <Avatar icon={<UserOutlined />} />
+              <span>{user?.nome}</span>
+              <span>{user?.email}</span>
+            </Space>
+          </div>
         </Header>
-
         <Content
           style={{
             margin: "24px 16px",
@@ -99,7 +119,6 @@ export const MainLayout = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {/* Renderiza as páginas correspondentes às rotas */}
           <Outlet />
         </Content>
       </Layout>

@@ -27,3 +27,24 @@
 .input:hover {
   border-color: #065426 !important;
 }
+
+.footerLogin{
+  /* border: solid red; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+.forgetPass{
+  text-decoration: underline;
+  font-weight: bold;
+  color: #065426;
+}
+.forgetPass:hover{
+  opacity: .8;
+  color: #065426;
+}
+.register{
+  font-weight: 500;
+}

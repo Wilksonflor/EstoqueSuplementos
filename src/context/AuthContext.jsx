@@ -1,53 +1,52 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import UserService from "../services/UsuariosServices";
-
+import { jwtDecode } from "jwt-decode";
 export const AuthContext = createContext();
-
+import UserService from "../services/UsuariosServices";
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const login = async (credentials) => {
-    setLoading(true);
     try {
-      const data = await UserService.login(credentials);
-      console.log("Enviando credenciais", credentials);
-      console.log("data", data);
-
-      localStorage.setItem("authToken", data.token);
-      setUser(data.user); // Atualiza o estado
+      const response = await UserService.login(credentials);
+      const { token, use } = response;
+      localStorage.setItem("authToken", response.token);
+      const decodedUser = jwtDecode(response.token);
+      setUser({ ...decodedUser, ...user });
     } catch (error) {
       console.error("Erro ao fazer login:", error.message);
-    } finally {
-      setLoading(false);
+      throw new Error("Não foi possível realizar o login.");
     }
   };
 
-  const logout = async () => {
-    setLoading(true);
+  const logout = () => {
     try {
-      await UserService.logout();
       localStorage.removeItem("authToken");
       setUser(null);
+      console.log("Usuário deslogado com sucesso.");
     } catch (error) {
       console.error("Erro ao fazer logout:", error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
-    console.log("Usuário atualizado no contexto:", user);
-  }, [user]); // Monitora mudanças no estado `user`
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      try {
+        const decodedUser = jwtDecode(token);
+        setUser(decodedUser);
+      } catch (error) {
+        console.error("Erro ao decodificar o token:", error.message);
+      }
+    }
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Hook personalizado para acessar o AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
