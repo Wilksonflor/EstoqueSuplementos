@@ -1,4 +1,3 @@
-
 # 🏋️‍♂️ Estoque de Suplementos
 
 Bem-vindo ao sistema de gerenciamento de estoque para sua loja de suplementos! Este projeto utiliza uma API desenvolvida para oferecer controle eficiente de produtos, categorias e usuários, tudo através de uma interface moderna, intuitiva e responsiva
@@ -44,15 +43,41 @@ Bem-vindo ao sistema de gerenciamento de estoque para sua loja de suplementos! E
 ## 📁 Estrutura de Pastas
 
 ```plaintext
-/src
-├── assets          # Recursos estáticos (imagens, estilos)
-├── components      # Componentes reutilizáveis
-├── layouts         # Layouts da aplicação
-├── pages           # Páginas principais
-├── routes          # Configuração de rotas
-├── services        # Integração com APIs
-├── App.jsx         # Componente principal
-└── main.jsx        # Ponto de entrada da aplicação
+LojaSuplementos-Front/
+├── public/
+├── src/
+│   ├── assets/
+│   │   └── styles/
+│   │       └── main.css
+│   ├── components/
+│   │   └── Buttons/
+│   │       └── CustomButton.jsx
+│   ├── context/
+│   │   └── AuthContext.jsx
+│   ├── layouts/
+│   │   └── MainLayout.jsx
+│   ├── pages/
+│   │   ├── Dashboard/
+│   │   │   └── Dashboard.jsx
+│   │   ├── Produtos/
+│   │   │   └── Produtos.jsx
+│   │   ├── Categorias/
+│   │   │   └── Categorias.jsx
+│   │   ├── Usuarios/
+│   │   │   └── Usuarios.jsx
+│   │   └── Login/
+│   │       └── Login.jsx
+│   ├── routes/
+│   │   ├── AppRoutes.jsx
+│   │   └── ProtectedRoute.jsx
+│   ├── services/
+│   │   └── UserService.js
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── vite.config.js
+├── .gitignore
+├── package.json
+└── README.md
 ```
 
 ## 🎨 Personalização
