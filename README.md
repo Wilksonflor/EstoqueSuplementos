@@ -86,7 +86,6 @@ Para customizar o tema da aplicação, modifique as variáveis no arquivo de con
 
 ## 🔍 Próximos Passos
 
-- Implementar autenticação e autorização de usuários.
 - Integrar com uma API backend para persistência de dados.
 - Adicionar testes unitários e de integração.
 - Melhorar a responsividade para dispositivos móveis.
