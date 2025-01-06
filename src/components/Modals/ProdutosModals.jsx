@@ -1,22 +1,39 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, Form, Input, Select, Row, Col, Button, message } from "antd";
 import { DollarOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
-const ProdutosModal = ({ visible, onCancel, onCreate }) => {
+const ProdutosModal = ({ visible, onCancel, onCreate, onEdit, produto }) => {
   const [form] = Form.useForm();
 
+  // Preencher o formulário ao abrir para edição
+  useEffect(() => {
+    if (produto) {
+      form.setFieldsValue({
+        ...produto,
+        precoUnitario: produto.preco, // Mapeia preco para precoUnitario
+      });
+    } else {
+      form.resetFields(); 
+    }
+  }, [produto, form]);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       const formattedValues = {
         ...values,
-        preco: values.precoUnitario, 
+        preco: values.precoUnitario,
       };
-      delete formattedValues.precoUnitario; 
-      await onCreate(formattedValues);
+      delete formattedValues.precoUnitario;
+
+      if (produto) {
+        await onEdit({ ...formattedValues, id: produto.id }); 
+      } else {
+        await onCreate(formattedValues); 
+      }
+
       form.resetFields();
     } catch (error) {
       message.error("Erro ao tentar salvar o produto.");
@@ -25,11 +42,11 @@ const ProdutosModal = ({ visible, onCancel, onCreate }) => {
 
   return (
     <Modal
-      title="Adicionar Produto"
+      title={produto ? "Editar Produto" : "Adicionar Produto"}
       open={visible}
       onCancel={onCancel}
       footer={null}
-      styles={{
+      style={{
         padding: "16px",
         maxHeight: "70vh",
         overflowY: "auto",
@@ -68,7 +85,6 @@ const ProdutosModal = ({ visible, onCancel, onCreate }) => {
             </Form.Item>
           </Col>
         </Row>
-
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={24} md={12}>
             <Form.Item
@@ -99,7 +115,6 @@ const ProdutosModal = ({ visible, onCancel, onCreate }) => {
             </Form.Item>
           </Col>
         </Row>
-
         <Row>
           <Col xs={24}>
             <Form.Item
@@ -117,14 +132,13 @@ const ProdutosModal = ({ visible, onCancel, onCreate }) => {
             </Form.Item>
           </Col>
         </Row>
-
         <Row justify="end" gutter={16}>
           <Col>
             <Button onClick={onCancel}>Cancelar</Button>
           </Col>
           <Col>
             <Button type="primary" onClick={handleSubmit}>
-              Salvar
+              {produto ? "Atualizar" : "Salvar"}
             </Button>
           </Col>
         </Row>
