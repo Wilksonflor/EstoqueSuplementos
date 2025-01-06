@@ -40,11 +40,11 @@ export const MainLayout = () => {
         />
         <Menu
           mode="inline"
-          theme="dark" /* Torna o menu com fundo escuro e itens brancos */
+          theme="light"
           className="menu"
           items={[
             {
-              key: "2",
+              key: "1",
               icon: <ShoppingCartOutlined className="menu-icon" />,
               label: (
                 <Link to="/produtos" className="menu-link">
@@ -53,7 +53,7 @@ export const MainLayout = () => {
               ),
             },
             {
-              key: "3",
+              key: "2",
               icon: <TagsOutlined className="menu-icon" />,
               label: (
                 <Link to="/categorias" className="menu-link">
@@ -62,7 +62,7 @@ export const MainLayout = () => {
               ),
             },
             {
-              key: "4",
+              key: "3",
               icon: <UserOutlined className="menu-icon" />,
               label: (
                 <Link to="/usuarios" className="menu-link">
@@ -71,7 +71,7 @@ export const MainLayout = () => {
               ),
             },
             {
-              key: "5",
+              key: "4",
               icon: <LogoutOutlined className="logout-icon" />,
               label: (
                 <Link to="/login" onClick={logout} className="logout-link">
@@ -101,7 +101,7 @@ export const MainLayout = () => {
               height: 64,
             }}
           />
-          <h2 style={{ marginLeft: "16px" }}>Sistema de Estoque</h2>
+          <h2 style={{ marginLeft: "16px" }}>Gerenciamento de estoque</h2>
           <div className="avatar">
             <Space className="avatar-space">
               <Avatar icon={<UserOutlined />} />

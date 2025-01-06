@@ -1,89 +1,136 @@
-import React, { useState } from "react";
-import { Modal, Button, Form, Input, InputNumber } from "antd";
+import React from "react";
+import { Modal, Form, Input, Select, Row, Col, Button, message } from "antd";
+import { DollarOutlined } from "@ant-design/icons";
 
-const ProdutosModal = ({ visible, onCreate, onCancel }) => {
+const { Option } = Select;
+
+const ProdutosModal = ({ visible, onCancel, onCreate }) => {
   const [form] = Form.useForm();
+
+
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      const formattedValues = {
+        ...values,
+        preco: values.precoUnitario, 
+      };
+      delete formattedValues.precoUnitario; 
+      await onCreate(formattedValues);
+      form.resetFields();
+    } catch (error) {
+      message.error("Erro ao tentar salvar o produto.");
+    }
+  };
 
   return (
     <Modal
+      title="Adicionar Produto"
       open={visible}
-      title="Cadastrar Produto"
-      okText="Cadastrar"
-      cancelText="Cancelar"
       onCancel={onCancel}
-      onOk={() => {
-        form
-          .validateFields()
-          .then((values) => {
-            form.resetFields();
-            onCreate(values);
-          })
-          .catch((info) => {
-            console.log("Validate Failed:", info);
-          });
+      footer={null}
+      styles={{
+        padding: "16px",
+        maxHeight: "70vh",
+        overflowY: "auto",
       }}
+      width={window.innerWidth > 768 ? 600 : "90%"}
     >
-      <Form form={form} layout="vertical" name="form_in_modal">
-        <Form.Item
-          name="name"
-          label="Nome do Produto"
-          rules={[
-            { required: true, message: "Por favor insira o nome do produto!" },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="price"
-          label="Preço"
-          rules={[
-            { required: true, message: "Por favor insira o preço do produto!" },
-          ]}
-        >
-          <InputNumber
-            style={{ width: "100%" }}
-            min={0}
-            formatter={(value) =>
-              `R$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            }
-            parser={(value) => value.replace(/\R\$\s?|(,*)/g, "")}
-          />
-        </Form.Item>
-        <Form.Item name="description" label="Descrição">
-          <Input.TextArea />
-        </Form.Item>
+      <Form form={form} layout="vertical">
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={24} md={12}>
+            <Form.Item
+              label="Nome do Produto"
+              name="nome"
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor, insira o nome do produto!",
+                },
+              ]}
+            >
+              <Input placeholder="Ex.: Whey Protein" />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={24} md={12}>
+            <Form.Item
+              label="Preço Unitário"
+              name="precoUnitario"
+              rules={[
+                { required: true, message: "Por favor, insira o preço!" },
+              ]}
+            >
+              <Input
+                prefix={<DollarOutlined />}
+                type="number"
+                placeholder="Ex.: 50.00"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={24} md={12}>
+            <Form.Item
+              label="Quantidade"
+              name="quantidade"
+              rules={[
+                { required: true, message: "Por favor, insira a quantidade!" },
+              ]}
+            >
+              <Input type="number" placeholder="Ex.: 10" />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={24} md={12}>
+            <Form.Item
+              label="Categoria"
+              name="categoria"
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor, selecione a categoria!",
+                },
+              ]}
+            >
+              <Select placeholder="Selecione uma categoria">
+                <Option value="Suplementos">Suplementos</Option>
+                <Option value="Vitaminas">Vitaminas</Option>
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={24}>
+            <Form.Item
+              label="Descrição"
+              name="descricao"
+              rules={[
+                { required: true, message: "Por favor, insira uma descrição!" },
+              ]}
+            >
+              <Input.TextArea
+                placeholder="Descreva o produto (máx. 200 caracteres)"
+                maxLength={200}
+                rows={3}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row justify="end" gutter={16}>
+          <Col>
+            <Button onClick={onCancel}>Cancelar</Button>
+          </Col>
+          <Col>
+            <Button type="primary" onClick={handleSubmit}>
+              Salvar
+            </Button>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );
 };
 
-const ProdutosModals = () => {
-  const [visible, setVisible] = useState(false);
-
-  const onCreate = (values) => {
-    console.log("Received values of form: ", values);
-    setVisible(false);
-  };
-
-  return (
-    <div>
-      <Button
-        type="primary"
-        onClick={() => {
-          setVisible(true);
-        }}
-      >
-        Novo Produto
-      </Button>
-      <ProdutosModal
-        visible={visible}
-        onCreate={onCreate}
-        onCancel={() => {
-          setVisible(false);
-        }}
-      />
-    </div>
-  );
-};
-
-export default ProdutosModals;
+export default ProdutosModal;

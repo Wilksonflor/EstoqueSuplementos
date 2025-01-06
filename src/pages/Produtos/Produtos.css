@@ -1,0 +1,28 @@
+.containerButtons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 16px; 
+}
+
+.searchControl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; 
+}
+
+.ant-table {
+  overflow-x: auto; 
+}
+
+@media (max-width: 768px) {
+  .containerButtons {
+    flex-direction: column; 
+  }
+
+  .searchControl {
+    justify-content: center; 
+  }
+}

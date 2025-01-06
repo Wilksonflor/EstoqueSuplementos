@@ -19,16 +19,20 @@
 
 .menu {
   background-color: #085924;
+  color: #fff !important;
 }
-
+.menu .ant-menu-item-selected {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  color: #000 !important;
+}
 .menu-icon {
-  color: #fff;
+  color: #fff !important;
   font-weight: bold;
   opacity: 1;
 }
 
 .menu-link {
-  color: #fff;
+  color: #fff !important;
   font-weight: bold;
   opacity: 1;
 }
