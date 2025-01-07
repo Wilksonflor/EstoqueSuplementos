@@ -1,5 +1,15 @@
 import React, { useEffect } from "react";
-import { Modal, Form, Input, Select, Row, Col, Button, message } from "antd";
+import {
+  Modal,
+  Form,
+  Input,
+  Select,
+  Row,
+  Col,
+  Button,
+  message,
+  Checkbox,
+} from "antd";
 import { DollarOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
@@ -12,10 +22,11 @@ const ProdutosModal = ({ visible, onCancel, onCreate, onEdit, produto }) => {
     if (produto) {
       form.setFieldsValue({
         ...produto,
-        precoUnitario: produto.preco, // Mapeia preco para precoUnitario
+        precoUnitario: produto.preco,
+        ativo: produto.ativo !== undefined ? produto.ativo : true,
       });
     } else {
-      form.resetFields(); 
+      form.resetFields();
     }
   }, [produto, form]);
 
@@ -29,9 +40,9 @@ const ProdutosModal = ({ visible, onCancel, onCreate, onEdit, produto }) => {
       delete formattedValues.precoUnitario;
 
       if (produto) {
-        await onEdit({ ...formattedValues, id: produto.id }); 
+        await onEdit({ ...formattedValues, id: produto.id });
       } else {
-        await onCreate(formattedValues); 
+        await onCreate(formattedValues);
       }
 
       form.resetFields();
@@ -132,6 +143,15 @@ const ProdutosModal = ({ visible, onCancel, onCreate, onEdit, produto }) => {
             </Form.Item>
           </Col>
         </Row>
+        {produto && (
+          <Row>
+            <Col xs={24}>
+              <Form.Item name="ativo" valuePropName="checked">
+                <Checkbox>ativo</Checkbox>
+              </Form.Item>
+            </Col>
+          </Row>
+        )}
         <Row justify="end" gutter={16}>
           <Col>
             <Button onClick={onCancel}>Cancelar</Button>

@@ -12,14 +12,19 @@ const { Option } = Select;
 const Produtos = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [produtos, setProdutos] = useState([]);
+  const [filteredProdutos, setFilteredProdutos] = useState([]);
   const [editingProduto, setEditingProduto] = useState(null);
 
-  // Função para buscar produtos
+  const [filtroCategoria, setFiltroCategoria] = useState("todos");
+  const [filtroStatus, setFiltroStatus] = useState("todos");
+  const [filtroBusca, setFiltroBusca] = useState("");
+
   const fetchProdutos = async () => {
     try {
       const response = await ProdutoService.getProdutos();
       console.log("Produtos:", response);
       setProdutos(response);
+      setFilteredProdutos(response);
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
       message.error("Erro ao buscar produtos.");
@@ -30,7 +35,25 @@ const Produtos = () => {
     fetchProdutos();
   }, []);
 
-  // Função para adicionar produto
+  useEffect(() => {
+    const produtosFiltrados = produtos.filter((produto) => {
+      const matchCategoria =
+        filtroCategoria === "todos" || produto.categoria?.toLowerCase() === filtroCategoria.toLowerCase();
+      const matchStatus =
+        filtroStatus === "todos" ||
+        (filtroStatus === "ativo" && produto.ativo) ||
+        (filtroStatus === "inativo" && !produto.ativo);
+      const matchBusca =
+        filtroBusca === "" ||
+        produto.nome.toLowerCase().includes(filtroBusca.toLowerCase()) ||
+        produto.id.toLowerCase().includes(filtroBusca.toLowerCase());
+
+      return matchCategoria && matchStatus && matchBusca;
+    });
+
+    setFilteredProdutos(produtosFiltrados);
+  }, [filtroCategoria, filtroStatus, filtroBusca, produtos]);
+
   const handleAddProduto = async (produto) => {
     try {
       await ProdutoService.createProduto(produto);
@@ -55,11 +78,35 @@ const Produtos = () => {
     }
   };
 
-  const handleDeleteProduto = async (id) => {
-    console.log("Deletar produto com ID:", id);
+  const handleEdit = (id) => {
+    const produto = produtos.find((p) => p.id === id);
+    if (produto) {
+      setEditingProduto(produto);
+      setModalVisible(true);
+    } else {
+      message.error("Produto não encontrado.");
+    }
   };
 
-  // Configuração das colunas da tabela
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Confirmação",
+      content: "Você tem certeza que deseja excluir este produto?",
+      okText: "Sim",
+      cancelText: "Não",
+      onOk: async () => {
+        try {
+          await ProdutoService.deleteProduto(id);
+          message.success("Produto excluído com sucesso!");
+          fetchProdutos();
+        } catch (error) {
+          console.error("Erro ao excluir produto:", error);
+          message.error("Erro ao excluir produto.");
+        }
+      },
+    });
+  };
+
   const columns = [
     {
       title: "Nome",
@@ -117,53 +164,34 @@ const Produtos = () => {
     },
   ];
 
-  const handleEdit = (id) => {
-    const produto = produtos.find((p) => p.id === id);
-    if (produto) {
-      setEditingProduto(produto);
-      setModalVisible(true);
-    } else {
-      message.error("Produto não encontrado.");
-    }
-  };
-
-  const handleDelete = (id) => {
-    Modal.confirm({
-      title: "Confirmação",
-      content: "Você tem certeza que deseja excluir este produto?",
-      okText: "Sim",
-      cancelText: "Não",
-      onOk: async () => {
-        try {
-          await ProdutoService.deleteProduto(id);
-          message.success("Produto excluído com sucesso!");
-          fetchProdutos();
-        } catch (error) {
-          console.error("Erro ao excluir produto:", error);
-          message.error("Erro ao excluir produto.");
-        }
-      },
-    });
-  };
-
   return (
     <div className="produtos">
       <div className="containerButtons">
         <div className="searchControl">
           <Input
-            placeholder="Buscar produto"
+            placeholder="Buscar produto por nome ou código"
             prefix={<IoSearchOutline />}
             style={{ width: 200, marginRight: 16 }}
+            onChange={(e) => setFiltroBusca(e.target.value)}
           />
           <Select
-            placeholder="Categoria"
+            placeholder="Selecione a categoria"
             style={{ width: 150, marginRight: 16 }}
+            onChange={(value) => setFiltroCategoria(value || "todos")}
+            value={filtroCategoria}
           >
+            <Option value="todos">Selecione a categoria</Option>
             <Option value="suplementos">Suplementos</Option>
             <Option value="vitaminas">Vitaminas</Option>
             <Option value="outros">Outros</Option>
           </Select>
-          <Select placeholder="Status" style={{ width: 150, marginRight: 16 }}>
+          <Select
+            placeholder="Todos"
+            style={{ width: 150, marginRight: 16 }}
+            onChange={(value) => setFiltroStatus(value || "todos")}
+            value={filtroStatus}
+          >
+            <Option value="todos">Todos</Option>
             <Option value="ativo">Ativo</Option>
             <Option value="inativo">Inativo</Option>
           </Select>
@@ -176,7 +204,7 @@ const Produtos = () => {
       </div>
 
       <Table
-        dataSource={produtos}
+        dataSource={filteredProdutos}
         columns={columns}
         rowKey="id"
         bordered
